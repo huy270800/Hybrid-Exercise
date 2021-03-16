@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Dimensions, TouchableOpacity } from 'react-native';
 import logo from '../assets/chickennnn-removebg-preview.png'
 import Icon from 'react-native-vector-icons/Ionicons'
+import axios from 'axios';
+
+
+
 const { width: WIDTH } = Dimensions.get('window')
 
-function Login() {
+function Login({navigation}) {
     const [showPass, setShowPass] = useState(true);
     const [press, setPress] = useState(false)
+    const [enterUsername, setUsername] = useState()
+    const [enterPassword, setPassword] = useState()
+    const [token, setToken] = useState()
+    const [isAuthenticated, setAuthneticated] = useState(false)
 
+    
 
     const showPassHandle = () => {
         if (press == false) {
@@ -19,7 +28,33 @@ function Login() {
             setShowPass(true)
         }
     }
-    return (
+
+    const loginHandle = ({}) => {
+        axios('https://graded-ex.herokuapp.com/login', {
+            method: 'POST',
+            data: {
+                username: enterUsername,
+                password: enterPassword
+            }
+        })
+            .then(res => {
+                console.log(res)
+                console.log(res.data.token)
+                setToken(res.data.token)
+                if (res.data.message === 'Login Successful') setAuthneticated(true)
+                else {
+                    setAuthneticated(false)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    const logoutHandle = () =>{
+        setAuthneticated(false)
+    }
+    const output = (
         <View style={styles.backgroundContainer}>
             <View style={styles.logoContainer}>
                 <Image source={logo} style={styles.logo} />
@@ -36,6 +71,8 @@ function Login() {
                     placeholder={'Username'}
                     placeholderTextColor={'rgba(255,255,255,0.7)'}
                     underlineColorAndroid='transparent'
+                    value={enterUsername}
+                    onChangeText={text => { setUsername(text) }}
                 />
             </View>
 
@@ -50,6 +87,8 @@ function Login() {
                     secureTextEntry={showPass}
                     placeholderTextColor={'rgba(255,255,255,0.7)'}
                     underlineColorAndroid='transparent'
+                    value={enterPassword}
+                    onChangeText={text => setPassword(text)}
                 />
 
                 <TouchableOpacity style={styles.btnEye}
@@ -62,16 +101,28 @@ function Login() {
             </View>
 
             <TouchableOpacity style={styles.btnLogin} >
-                <Text style={styles.text}>Login</Text>
+                <Text style={styles.text} onPress={loginHandle}>Login</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.btnSignUp} >
-                <Text style={styles.text}>Sign up</Text>
+                <Text style={styles.text} >Sign up</Text>
             </TouchableOpacity>
-            
-            
         </View>
-    );
+    )
+     if(isAuthenticated == false) {
+         return output
+     }
+    return (
+        <View style={styles.backgroundContainer}>
+            <Text>
+                You logged in
+            </Text>
+            <TouchableOpacity style={styles.btnLogin}>
+                <Text style={styles.text} onPress={logoutHandle}>Logout</Text>
+            </TouchableOpacity>
+        </View>
+    )
+        ;
 }
 
 const styles = StyleSheet.create({
@@ -143,7 +194,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 20
     }
-    
+
 })
 
-export default Login
+export default Login 

@@ -12,8 +12,16 @@ function Search() {
             placeholder="Search"
             onChangeText={onChangeSearch}
             value={searchQuery}
+            style = {styles.backgroundContainer}
         />
     );
 }
+
+const styles = StyleSheet.create({
+    backgroundContainer: {
+        backgroundColor: '#E7879A',
+    }, 
+})
+
 
 export default Search

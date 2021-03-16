@@ -7,7 +7,6 @@ import {Ionicons} from 'react-native-vector-icons';
 import User from './Screens/User'
 import Search from './Screens/Search'
 import Product from './Screens/Product'
-import axios from 'axios';
 import Login from './Screens/Login';
 
 
@@ -15,19 +14,7 @@ const Tab = createBottomTabNavigator();
  
 
 export default function App() {
-  const [data,setData] = useState([])
-  useEffect(() => {
-    axios({
-      url:'http://localhost:3000/products',
-      method: 'GET'
-    })
-    .then(res => {
-      setData(res)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }, [])
+  
   return (
     <NavigationContainer >
       <Tab.Navigator style={styles.container}>
